@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastFind360 - Making Nigeria's Invisible Economy, Visible</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-satellite"></i>
+                <span>FastFind360</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="verification.html">Verify Property</a></li>
+                <li><a href="dashboard.html">Government Portal</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Making Nigeria's Invisible Economy, Visible</h1>
+            <p>We identify unregistered properties to recover ₦2.3 trillion in national revenue.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="scrollToSection('demo')">Request a Government Demo</button>
+                <button class="btn btn-secondary" onclick="window.location.href='verification.html'">Verify a Property</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Demonstration -->
+    <section id="problem" class="problem-section">
+        <div class="container">
+            <h2>The Problem</h2>
+            <div class="problem-content">
+                <div class="map-container">
+                    <div class="interactive-map">
+                        <div id="homepageMap" style="width: 100%; height: 400px; border-radius: 12px;"></div>
+                    </div>
+                </div>
+                <div class="problem-card">
+                    <div class="card-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>₦180 Million Annual Revenue Leak</h3>
+                    </div>
+                    <p>Just in this neighborhood. These structures have no official record.</p>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="number">47</span>
+                            <span class="label">Unregistered Structures</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number">₦180M</span>
+                            <span class="label">Annual Revenue Loss</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Showcase -->
+    <section id="solution" class="solution-section">
+        <div class="container">
+            <h2>Our Solution</h2>
+            <div class="solution-grid">
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-satellite-dish"></i>
+                    </div>
+                    <h3>Satellite Detection</h3>
+                    <p>Our AI analyzes satellite imagery in real-time to identify and classify new or unrecorded buildings with 95% accuracy.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Government Dashboard</h3>
+                    <p>We provide a powerful dashboard for officials to track revenue recovery, manage enforcement, and monitor urban development.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Public Verification</h3>
+                    <p>Citizens can instantly verify any property's legitimacy, preventing fraud and promoting transparency.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo Simulation -->
+    <section id="demo" class="demo-section">
+        <div class="container">
+            <h2>See It In Action</h2>
+            <div class="demo-container">
+                <div class="demo-video">
+                    <div class="video-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                        <h3>5-Minute Demo</h3>
+                        <p>Watch our AI identify unregistered properties in real-time</p>
+                    </div>
+                </div>
+                <div class="demo-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Satellite Scan</h4>
+                            <p>AI analyzes high-resolution satellite imagery</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Property Detection</h4>
+                            <p>Identifies structures not in government database</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Revenue Calculation</h4>
+                            <p>Calculates potential tax revenue for each property</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Enforcement Queue</h4>
+                            <p>Prioritizes properties by revenue potential</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Numbers -->
+    <section id="impact" class="impact-section">
+        <div class="container">
+            <h2>Impact by the Numbers</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-number">₦2.3T</div>
+                    <div class="impact-label">Annual Revenue Potential</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-number">89%</div>
+                    <div class="impact-label">Reduction in Verification Time</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-number">Instant</div>
+                    <div class="impact-label">Fraud Prevention</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-number">95%</div>
+                    <div class="impact-label">Detection Accuracy</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology & Vision -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>Our Mission</h2>
+            <div class="mission-content">
+                <div class="mission-text">
+                    <p>FastFind360 is revolutionizing property verification in Nigeria by leveraging cutting-edge satellite technology and artificial intelligence. Our mission is to foster transparent governance, drive economic growth with space technology, and enable sustainable urban planning.</p>
+                    <div class="mission-points">
+                        <div class="point">
+                            <i class="fas fa-eye"></i>
+                            <span>Transparent Governance</span>
+                        </div>
+                        <div class="point">
+                            <i class="fas fa-rocket"></i>
+                            <span>Economic Growth</span>
+                        </div>
+                        <div class="point">
+                            <i class="fas fa-city"></i>
+                            <span>Sustainable Planning</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="roadmap">
+                    <h3>Development Roadmap</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">Q1 2025</div>
+                            <div class="timeline-content">
+                                <h4>Pilot Deployment</h4>
+                                <p>Launch in Gombe State</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Q2 2025</div>
+                            <div class="timeline-content">
+                                <h4>State Expansion</h4>
+                                <p>Expand to 5 additional states</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Q4 2025</div>
+                            <div class="timeline-content">
+                                <h4>National Launch</h4>
+                                <p>Full nationwide deployment</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2>Get Started</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Ready to recover lost revenue?</h3>
+                    <p>Contact us to schedule a government demo or learn more about our solution.</p>
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@fastfind360.ng</span>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-phone"></i>
+                            <span>+234 805 641 9040</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form>
+                        <input type="text" placeholder="Your Name" required>
+                        <input type="email" placeholder="Email Address" required>
+                        <input type="text" placeholder="Organization" required>
+                        <textarea placeholder="Message (Optional)"></textarea>
+                        <button type="submit" class="btn btn-primary">Request Demo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-satellite"></i>
+                        <span>FastFind360</span>
+                    </div>
+                    <p>Making Nigeria's invisible economy, visible.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="verification.html">Verify Property</a></li>
+                        <li><a href="dashboard.html">Government Portal</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>info@fastfind360.ng</li>
+                        <li>+234 805 641 9040</li>
+                        <li>Abuja, Nigeria</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FastFind360. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize Mapbox for homepage
+        mapboxgl.accessToken = 'pk.eyJ1IjoibW10dWt1ciIsImEiOiJjbTEyZGk2dmwwbjZyMmtzMXFzb3V0cHRuIn0.pDgNHWd_o6u2NKVFib0EPQ';
+        
+        const homepageMap = new mapboxgl.Map({
+            container: 'homepageMap',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [11.1670, 10.2897], // Gombe, Nigeria coordinates
+            zoom: 13
+        });
+
+        // Add navigation controls
+        homepageMap.addControl(new mapboxgl.NavigationControl());
+
+        // Add sample unregistered properties as markers
+        const unregisteredProperties = [
+            {
+                coordinates: [11.1670, 10.2897],
+                title: 'Unregistered Commercial Building',
+                revenue: '₦15.2M',
+                description: 'Commercial property not in government database'
+            },
+            {
+                coordinates: [11.1750, 10.2957],
+                title: 'Unregistered Residential Complex',
+                revenue: '₦8.7M',
+                description: 'Residential complex without proper registration'
+            },
+            {
+                coordinates: [11.1590, 10.2837],
+                title: 'Unregistered Office Building',
+                revenue: '₦12.3M',
+                description: 'Office building missing from tax rolls'
+            },
+            {
+                coordinates: [11.1830, 10.3017],
+                title: 'Unregistered Retail Center',
+                revenue: '₦22.1M',
+                description: 'Shopping center not properly registered'
+            },
+            {
+                coordinates: [11.1510, 10.2777],
+                title: 'Unregistered Industrial Facility',
+                revenue: '₦31.5M',
+                description: 'Industrial facility without proper documentation'
+            }
+        ];
+
+        // Add markers for unregistered properties
+        unregisteredProperties.forEach(property => {
+            // Create custom marker element
+            const markerEl = document.createElement('div');
+            markerEl.className = 'unregistered-marker';
+            markerEl.style.cssText = `
+                width: 20px;
+                height: 20px;
+                background: #ef4444;
+                border: 3px solid white;
+                border-radius: 50%;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                animation: pulse 2s infinite;
+            `;
+
+            // Create popup
+            const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                <div style="padding: 10px;">
+                    <h4 style="margin: 0 0 8px 0; color: #dc2626;">${property.title}</h4>
+                    <p style="margin: 0 0 5px 0; font-size: 14px;">${property.description}</p>
+                    <p style="margin: 0; font-weight: bold; color: #dc2626;">Revenue Loss: ${property.revenue}/year</p>
+                </div>
+            `);
+
+            // Add marker to map
+            new mapboxgl.Marker(markerEl)
+                .setLngLat(property.coordinates)
+                .setPopup(popup)
+                .addTo(homepageMap);
+        });
+
+        // Add CSS for pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.2); opacity: 0.7; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Verification - FastFind360</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <style>
+        .verification-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            padding: 8rem 0 4rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        
+        .search-button {
+            width: 100%;
+            padding: 1rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .search-button:hover {
+            background: #059669;
+        }
+        
+        .map-section {
+            padding: 3rem 0;
+            background: #f8fafc;
+        }
+        
+        .verification-map {
+            background: #e5e7eb;
+            border-radius: 12px;
+            height: 500px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .map-content {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #f3f4f6, #e5e7eb);
+        }
+        
+        .map-placeholder {
+            text-align: center;
+            color: #6b7280;
+        }
+        
+        .map-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #10b981;
+        }
+        
+        .verification-result {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .result-icon.verified {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .result-icon.unverified {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .result-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .result-title.verified {
+            color: #16a34a;
+        }
+        
+        .result-title.unverified {
+            color: #dc2626;
+        }
+        
+        .result-details {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .report-button {
+            background: #f3f4f6;
+            color: #374151;
+            border: 2px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .report-button:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+        
+        .features-section {
+            padding: 4rem 0;
+            background: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+        
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .feature-card h3 {
+            color: #1e3a8a;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .verification-hero {
+                padding: 6rem 0 3rem;
+            }
+            
+            .search-box {
+                padding: 1.5rem;
+            }
+            
+            .verification-map {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-satellite"></i>
+                <span>FastFind360</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="verification.html">Verify Property</a></li>
+                <li><a href="dashboard.html">Government Portal</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="verification-hero">
+        <div class="container">
+            <h1>Verify a Property</h1>
+            <p>Enter a location or property ID to confirm its status with government records</p>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Enter property address, coordinates, or property ID..." id="searchInput">
+                    <button class="search-button" onclick="verifyProperty()">
+                        <i class="fas fa-search"></i> Verify Property
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <h2>Interactive Map</h2>
+            <p>Pan and zoom to explore areas of interest</p>
+            
+            <div class="verification-map">
+                <div id="verificationMap" style="width: 100%; height: 500px; border-radius: 12px;"></div>
+            </div>
+            
+            <div class="verification-result" id="verificationResult">
+                <div class="result-header">
+                    <div class="result-icon" id="resultIcon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="result-title" id="resultTitle">Property Verified</div>
+                        <div class="result-details" id="resultDetails">
+                            This property is on record with the state government as of January 2024.
+                        </div>
+                    </div>
+                </div>
+                <button class="report-button" onclick="reportIssue()">
+                    <i class="fas fa-flag"></i> See an issue? Report it
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2>Why Use FastFind360 Verification?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Prevent Fraud</h3>
+                    <p>Instantly verify property legitimacy to avoid fraudulent transactions and ensure you're dealing with legitimate properties.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Instant Results</h3>
+                    <p>Get verification results in seconds, not days. No more waiting for government office visits or paperwork.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Transparent Data</h3>
+                    <p>Access the same government database that officials use, ensuring accuracy and reliability of information.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-satellite"></i>
+                        <span>FastFind360</span>
+                    </div>
+                    <p>Making Nigeria's invisible economy, visible.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="verification.html">Verify Property</a></li>
+                        <li><a href="dashboard.html">Government Portal</a></li>
+                        <li><a href="index.html#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>demo@fastfind360.ng</li>
+                        <li>+234 800 FASTFIND</li>
+                        <li>Abuja, Nigeria</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FastFind360. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize Mapbox for verification page
+        mapboxgl.accessToken = 'pk.eyJ1IjoibW10dWt1ciIsImEiOiJjbTEyZGk2dmwwbjZyMmtzMXFzb3V0cHRuIn0.pDgNHWd_o6u2NKVFib0EPQ';
+        
+        const verificationMap = new mapboxgl.Map({
+            container: 'verificationMap',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [7.4916, 9.0820], // Nigeria center coordinates
+            zoom: 6
+        });
+
+        // Add navigation controls
+        verificationMap.addControl(new mapboxgl.NavigationControl());
+
+        // Add geocoder for address search
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search for a location...',
+            countries: 'ng', // Limit to Nigeria
+            types: 'address,poi'
+        });
+
+        // Add geocoder to map
+        verificationMap.addControl(geocoder);
+
+        // Sample properties for demo
+        const sampleProperties = [
+            {
+                coordinates: [7.4916, 9.0820],
+                address: 'Plot 428, Wuse Zone 2, Abuja',
+                verified: true,
+                lastUpdated: '2024-01-15'
+            },
+            {
+                coordinates: [3.3792, 6.5244],
+                address: 'House 45, Victoria Island, Lagos',
+                verified: false,
+                lastUpdated: null
+            },
+            {
+                coordinates: [7.0174, 4.8325],
+                address: 'Block A, GRA, Port Harcourt',
+                verified: true,
+                lastUpdated: '2024-01-10'
+            },
+            {
+                coordinates: [8.5241, 11.9861],
+                address: 'Street 12, Old GRA, Kano',
+                verified: false,
+                lastUpdated: null
+            },
+            {
+                coordinates: [7.4916, 9.0820],
+                address: 'Plot 78, Maitama, Abuja',
+                verified: true,
+                lastUpdated: '2024-01-20'
+            }
+        ];
+
+        // Add markers for sample properties
+        sampleProperties.forEach(property => {
+            const markerEl = document.createElement('div');
+            markerEl.className = 'property-marker';
+            markerEl.style.cssText = `
+                width: 16px;
+                height: 16px;
+                background: ${property.verified ? '#16a34a' : '#ef4444'};
+                border: 3px solid white;
+                border-radius: 50%;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            `;
+
+            const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                <div style="padding: 10px;">
+                    <h4 style="margin: 0 0 8px 0; color: ${property.verified ? '#16a34a' : '#dc2626'};">${property.address}</h4>
+                    <p style="margin: 0; font-size: 14px;">
+                        Status: <strong style="color: ${property.verified ? '#16a34a' : '#dc2626'};">${property.verified ? 'Verified' : 'Not Verified'}</strong>
+                    </p>
+                    ${property.lastUpdated ? `<p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Last Updated: ${property.lastUpdated}</p>` : ''}
+                </div>
+            `);
+
+            new mapboxgl.Marker(markerEl)
+                .setLngLat(property.coordinates)
+                .setPopup(popup)
+                .addTo(verificationMap);
+        });
+
+        // Property Verification Function
+        function verifyProperty() {
+            const searchInput = document.getElementById('searchInput');
+            const resultDiv = document.getElementById('verificationResult');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDetails = document.getElementById('resultDetails');
+            
+            const location = searchInput.value.trim();
+            
+            if (!location) {
+                showNotification('Please enter a location or property ID.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            resultDiv.style.display = 'block';
+            resultTitle.textContent = 'Verifying...';
+            resultDetails.textContent = 'Checking government records...';
+            resultIcon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // Simulate API call
+            setTimeout(() => {
+                const isVerified = Math.random() > 0.4; // 60% chance of being verified
+                
+                if (isVerified) {
+                    resultIcon.className = 'result-icon verified';
+                    resultIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    resultTitle.className = 'result-title verified';
+                    resultTitle.textContent = 'Property Verified';
+                    resultDetails.textContent = `This property at "${location}" is on record with the state government as of ${new Date().toLocaleDateString()}.`;
+                } else {
+                    resultIcon.className = 'result-icon unverified';
+                    resultIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                    resultTitle.className = 'result-title unverified';
+                    resultTitle.textContent = 'Property Not Verified';
+                    resultDetails.textContent = `This property at "${location}" has no official record in the government database. Proceed with caution.`;
+                }
+                
+                showNotification(
+                    isVerified ? 'Property verification completed successfully.' : 'Property not found in government records.',
+                    isVerified ? 'success' : 'error'
+                );
+            }, 2000);
+        }
+        
+        // Map Click Simulation
+        function simulateMapClick() {
+            const searchInput = document.getElementById('searchInput');
+            const sampleLocations = [
+                'Plot 123, Wuse Zone 2, Abuja',
+                'House 45, Victoria Island, Lagos',
+                'Block A, GRA, Port Harcourt',
+                'Street 12, Old GRA, Kano',
+                'Plot 78, Maitama, Abuja'
+            ];
+            
+            const randomLocation = sampleLocations[Math.floor(Math.random() * sampleLocations.length)];
+            searchInput.value = randomLocation;
+            
+            showNotification(`Demo: Selected "${randomLocation}" from map. Click "Verify Property" to continue.`, 'info');
+        }
+        
+        // Report Issue Function
+        function reportIssue() {
+            showNotification('Thank you for your report. Our team will review the information and update the database accordingly.', 'success');
+        }
+        
+        // Enter key support for search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyProperty();
+            }
+        });
+        
+        // Map click event to add markers
+        verificationMap.on('click', function(e) {
+            const coordinates = e.lngLat;
+            
+            // Create a temporary marker
+            const markerEl = document.createElement('div');
+            markerEl.style.cssText = `
+                width: 12px;
+                height: 12px;
+                background: #3b82f6;
+                border: 2px solid white;
+                border-radius: 50%;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            `;
+
+            const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                <div style="padding: 10px;">
+                    <h4 style="margin: 0 0 8px 0;">Selected Location</h4>
+                    <p style="margin: 0; font-size: 14px;">Coordinates: ${coordinates.lng.toFixed(4)}, ${coordinates.lat.toFixed(4)}</p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Click "Verify Property" to check this location</p>
+                </div>
+            `);
+
+            new mapboxgl.Marker(markerEl)
+                .setLngLat(coordinates)
+                .setPopup(popup)
+                .addTo(verificationMap);
+                
+            showNotification('Location selected on map. Enter an address and click "Verify Property" to continue.', 'info');
+        });
+    </script>
+</body>
+</html> 

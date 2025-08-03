@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Dashboard - FastFind360</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <style>
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header i {
+            font-size: 3rem;
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+        
+        .login-header h1 {
+            color: #1e3a8a;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .login-button:hover {
+            background: #059669;
+        }
+        
+        .dashboard-container {
+            display: none;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .dashboard-header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .dashboard-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+        
+        .dashboard-logo i {
+            color: #10b981;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        
+        .user-role {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+        
+        .dashboard-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-title {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .metric-icon.revenue {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .metric-icon.properties {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        
+        .metric-icon.compliance {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-change {
+            font-size: 0.875rem;
+            color: #16a34a;
+        }
+        
+        .dashboard-sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        
+        .section-action {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .section-action:hover {
+            background: #059669;
+        }
+        
+        .compliance-map {
+            height: 400px;
+            background: #e5e7eb;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .map-placeholder {
+            text-align: center;
+            color: #6b7280;
+        }
+        
+        .map-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #10b981;
+        }
+        
+        .enforcement-queue {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .queue-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .queue-item:last-child {
+            border-bottom: none;
+        }
+        
+        .property-info h4 {
+            color: #1e3a8a;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .property-info p {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .revenue-potential {
+            text-align: right;
+        }
+        
+        .revenue-amount {
+            font-weight: 700;
+            color: #dc2626;
+            font-size: 1.125rem;
+        }
+        
+        .revenue-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .priority-badge {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            color: #1e3a8a;
+            border-bottom-color: #10b981;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .user-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="login-container">
+        <div class="login-form">
+            <div class="login-header">
+                <i class="fas fa-satellite"></i>
+                <h1>Government Portal</h1>
+                <p>Secure access to FastFind360 dashboard</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-button">Login</button>
+            </form>
+            <div style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: #6b7280;">
+                <p>Demo Credentials:</p>
+                <p>Username: admin | Password: demo123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="dashboard-container">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="dashboard-nav">
+                <div class="dashboard-logo">
+                    <i class="fas fa-satellite"></i>
+                    <span>FastFind360 Dashboard</span>
+                </div>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="user-name">Admin User</div>
+                        <div class="user-role">Government Official</div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-title">Revenue Recovered (YTD)</div>
+                        <div class="metric-icon revenue">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">₦2.1B</div>
+                    <div class="metric-change">+15.3% vs last year</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-title">New Properties Identified</div>
+                        <div class="metric-icon properties">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">1,247</div>
+                    <div class="metric-change">+23.1% this month</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-title">Compliance Rate</div>
+                        <div class="metric-icon compliance">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">89.2%</div>
+                    <div class="metric-change">+5.7% vs last month</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Sections -->
+            <div class="dashboard-sections">
+                <!-- Compliance Map Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Interactive Compliance Map</div>
+                        <button class="section-action" onclick="refreshMap()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="compliance-map">
+                        <div id="dashboardMap" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div>
+
+                <!-- Enforcement Queue Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">Enforcement Queue</div>
+                        <button class="section-action" onclick="exportQueue()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="enforcement-queue">
+                        <div class="queue-item">
+                            <div class="property-info">
+                                <h4>Plot 123, Wuse Zone 2</h4>
+                                <p>Commercial Building • Detected: 2 days ago</p>
+                                <span class="priority-badge">High Priority</span>
+                            </div>
+                            <div class="revenue-potential">
+                                <div class="revenue-amount">₦45.2M</div>
+                                <div class="revenue-label">Annual Potential</div>
+                            </div>
+                        </div>
+                        <div class="queue-item">
+                            <div class="property-info">
+                                <h4>House 45, Victoria Island</h4>
+                                <p>Residential • Detected: 5 days ago</p>
+                                <span class="priority-badge">Medium Priority</span>
+                            </div>
+                            <div class="revenue-potential">
+                                <div class="revenue-amount">₦28.7M</div>
+                                <div class="revenue-label">Annual Potential</div>
+                            </div>
+                        </div>
+                        <div class="queue-item">
+                            <div class="property-info">
+                                <h4>Block A, GRA Port Harcourt</h4>
+                                <p>Mixed Use • Detected: 1 week ago</p>
+                                <span class="priority-badge">High Priority</span>
+                            </div>
+                            <div class="revenue-potential">
+                                <div class="revenue-amount">₦67.3M</div>
+                                <div class="revenue-label">Annual Potential</div>
+                            </div>
+                        </div>
+                        <div class="queue-item">
+                            <div class="property-info">
+                                <h4>Street 12, Old GRA Kano</h4>
+                                <p>Residential • Detected: 3 days ago</p>
+                                <span class="priority-badge">Low Priority</span>
+                            </div>
+                            <div class="revenue-potential">
+                                <div class="revenue-amount">₦12.1M</div>
+                                <div class="revenue-label">Annual Potential</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Tabs -->
+            <div class="section-card" style="margin-top: 2rem;">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('analytics')">Revenue Analytics</button>
+                    <button class="tab" onclick="switchTab('reports')">Reports</button>
+                    <button class="tab" onclick="switchTab('settings')">Settings</button>
+                </div>
+                
+                <div id="analytics" class="tab-content active">
+                    <div style="padding: 1.5rem;">
+                        <h3>Revenue Recovery Trends</h3>
+                        <div style="height: 300px; background: #f8fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6b7280;">
+                            <div style="text-align: center;">
+                                <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 1rem; color: #10b981;"></i>
+                                <p>Revenue analytics chart would be displayed here</p>
+                                <p>Showing monthly recovery trends and projections</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="reports" class="tab-content">
+                    <div style="padding: 1.5rem;">
+                        <h3>Generate Reports</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="generateReport('compliance')">
+                                <i class="fas fa-file-alt"></i> Compliance Report
+                            </button>
+                            <button class="btn btn-primary" onclick="generateReport('revenue')">
+                                <i class="fas fa-chart-pie"></i> Revenue Report
+                            </button>
+                            <button class="btn btn-primary" onclick="generateReport('enforcement')">
+                                <i class="fas fa-clipboard-list"></i> Enforcement Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="settings" class="tab-content">
+                    <div style="padding: 1.5rem;">
+                        <h3>Dashboard Settings</h3>
+                        <p>Configure dashboard preferences, notifications, and user permissions.</p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-secondary" onclick="showNotification('Settings saved successfully!', 'success')">
+                                Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize Mapbox for dashboard
+        mapboxgl.accessToken = 'pk.eyJ1IjoibW10dWt1ciIsImEiOiJjbTEyZGk2dmwwbjZyMmtzMXFzb3V0cHRuIn0.pDgNHWd_o6u2NKVFib0EPQ';
+        
+        let dashboardMap;
+        
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple demo login
+            if (username === 'admin' && password === 'demo123') {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboardSection').style.display = 'block';
+                showNotification('Login successful! Welcome to the dashboard.', 'success');
+                
+                // Initialize map after login
+                setTimeout(() => {
+                    initializeDashboardMap();
+                }, 100);
+            } else {
+                showNotification('Invalid credentials. Use admin/demo123 for demo.', 'error');
+            }
+        });
+        
+        // Initialize dashboard map
+        function initializeDashboardMap() {
+            dashboardMap = new mapboxgl.Map({
+                container: 'dashboardMap',
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [7.4916, 9.0820], // Nigeria center coordinates
+                zoom: 6
+            });
+
+            // Add navigation controls
+            dashboardMap.addControl(new mapboxgl.NavigationControl());
+
+            // Sample compliance data
+            const complianceData = [
+                {
+                    coordinates: [7.4916, 9.0820],
+                    address: 'Plot 435, Wuse Zone 2, Abuja',
+                    status: 'non-compliant',
+                    revenue: '₦45.2M',
+                    priority: 'High',
+                    detected: '2 days ago'
+                },
+                {
+                    coordinates: [3.3792, 6.5244],
+                    address: 'House 45, Victoria Island, Lagos',
+                    status: 'non-compliant',
+                    revenue: '₦28.7M',
+                    priority: 'Medium',
+                    detected: '5 days ago'
+                },
+                {
+                    coordinates: [7.0174, 4.8325],
+                    address: 'Block A, GRA, Port Harcourt',
+                    status: 'non-compliant',
+                    revenue: '₦67.3M',
+                    priority: 'High',
+                    detected: '1 week ago'
+                },
+                {
+                    coordinates: [8.5241, 11.9861],
+                    address: 'Street 12, Old GRA, Kano',
+                    status: 'non-compliant',
+                    revenue: '₦12.1M',
+                    priority: 'Low',
+                    detected: '3 days ago'
+                },
+                {
+                    coordinates: [7.4916, 9.0820],
+                    address: 'Plot 78, Maitama, Abuja',
+                    status: 'compliant',
+                    revenue: '₦0',
+                    priority: 'N/A',
+                    detected: 'N/A'
+                }
+            ];
+
+            // Add markers for compliance data
+            complianceData.forEach(property => {
+                const markerEl = document.createElement('div');
+                markerEl.className = 'compliance-marker';
+                markerEl.style.cssText = `
+                    width: 18px;
+                    height: 18px;
+                    background: ${property.status === 'compliant' ? '#16a34a' : '#ef4444'};
+                    border: 3px solid white;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                `;
+
+                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                    <div style="padding: 10px;">
+                        <h4 style="margin: 0 0 8px 0; color: ${property.status === 'compliant' ? '#16a34a' : '#dc2626'};">${property.address}</h4>
+                        <p style="margin: 0 0 5px 0; font-size: 14px;">
+                            Status: <strong style="color: ${property.status === 'compliant' ? '#16a34a' : '#dc2626'};">${property.status === 'compliant' ? 'Compliant' : 'Non-Compliant'}</strong>
+                        </p>
+                        ${property.status === 'non-compliant' ? `
+                            <p style="margin: 0 0 5px 0; font-size: 14px;">Revenue Potential: <strong style="color: #dc2626;">${property.revenue}/year</strong></p>
+                            <p style="margin: 0 0 5px 0; font-size: 14px;">Priority: <strong style="color: #dc2626;">${property.priority}</strong></p>
+                            <p style="margin: 0; font-size: 12px; color: #6b7280;">Detected: ${property.detected}</p>
+                        ` : ''}
+                    </div>
+                `);
+
+                new mapboxgl.Marker(markerEl)
+                    .setLngLat(property.coordinates)
+                    .setPopup(popup)
+                    .addTo(dashboardMap);
+            });
+        }
+        
+        // Logout functionality
+        function logout() {
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('loginForm').reset();
+            showNotification('Logged out successfully.', 'info');
+        }
+        
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+        
+        // Map interaction simulation
+        function simulateMapInteraction() {
+            const properties = [
+                'Plot 123, Wuse Zone 2 - ₦45.2M potential',
+                'House 45, Victoria Island - ₦28.7M potential',
+                'Block A, GRA Port Harcourt - ₦67.3M potential',
+                'Street 12, Old GRA Kano - ₦12.1M potential'
+            ];
+            
+            const randomProperty = properties[Math.floor(Math.random() * properties.length)];
+            showNotification(`Demo: Clicked on ${randomProperty}`, 'info');
+        }
+        
+        // Refresh map
+        function refreshMap() {
+            showNotification('Map data refreshed successfully!', 'success');
+        }
+        
+        // Export queue
+        function exportQueue() {
+            showNotification('Enforcement queue exported to CSV successfully!', 'success');
+        }
+        
+        // Generate reports
+        function generateReport(type) {
+            const reportTypes = {
+                'compliance': 'Compliance Report',
+                'revenue': 'Revenue Report',
+                'enforcement': 'Enforcement Report'
+            };
+            
+            showNotification(`${reportTypes[type]} generated and downloaded successfully!`, 'success');
+        }
+        
+        // Auto-login for demo purposes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Uncomment the line below to auto-login for demo
+            // setTimeout(() => { document.getElementById('loginForm').dispatchEvent(new Event('submit')); }, 1000);
+        });
+    </script>
+</body>
+</html> 

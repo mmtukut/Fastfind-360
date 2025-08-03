@@ -250,8 +250,8 @@ The website includes realistic demo data:
 ## 📞 Support
 
 For questions or support regarding this demo:
-- **Email**: demo@fastfind360.ng
-- **Phone**: +234 800 FASTFIND
+- **Email**: info@fastfind360.ng
+- **Phone**: +234 805 641 9040
 - **Location**: Abuja, Nigeria
 
 ---

@@ -173,6 +173,203 @@ body {
     background: #f8fafc;
 }
 
+.satellite-status {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: 1000;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.timestamp {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.processing-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fbbf24;
+}
+
+.real-time-data {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.real-time-data h4 {
+    margin: 0 0 10px 0;
+    color: #1e3a8a;
+    font-size: 14px;
+}
+
+.detection-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 12px;
+}
+
+.detection-item:last-child {
+    border-bottom: none;
+}
+
+.property-id {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.detection-time {
+    color: #6b7280;
+}
+
+.revenue-loss {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.tech-specs {
+    margin-top: 15px;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.spec-item i {
+    color: #10b981;
+    width: 14px;
+}
+
+.satellite-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.satellite-btn, .overlay-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.satellite-btn {
+    background: #10b981;
+    color: white;
+}
+
+.satellite-btn:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+.overlay-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1e3a8a;
+    border: 2px solid #1e3a8a;
+}
+
+.overlay-btn:hover {
+    background: #1e3a8a;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.satellite-scan-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(16, 185, 129, 0.1) 50%, transparent 70%);
+    animation: scan 3s linear infinite;
+    pointer-events: none;
+    z-index: 500;
+}
+
+@keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.detection-highlight {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #ef4444;
+    border: 3px solid white;
+    border-radius: 50%;
+    animation: pulse 1s infinite;
+    z-index: 600;
+}
+
+.satellite-data-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    max-width: 250px;
+    z-index: 1000;
+    display: none;
+}
+
+.satellite-data-panel h4 {
+    margin: 0 0 10px 0;
+    color: #10b981;
+    font-size: 14px;
+}
+
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 11px;
+}
+
+.data-label {
+    color: #9ca3af;
+}
+
+.data-value {
+    color: #10b981;
+    font-weight: 600;
+}
+
 .problem-section h2 {
     text-align: center;
     font-size: 2.5rem;

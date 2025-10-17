@@ -1,4 +1,4 @@
-import { Building, Statistics, BuildingType } from '../types';
+import { Building, Statistics } from '../types';
 
 /**
  * Calculate statistics from building data

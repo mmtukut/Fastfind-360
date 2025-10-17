@@ -17,7 +17,6 @@ function generateBuildingPolygon(
   const latOffset = (sideLength / 110540) * (Math.random() * 0.4 + 0.8);
   
   // Create a roughly rectangular polygon with slight variations
-  const angle = Math.random() * Math.PI / 6; // Random rotation up to 30 degrees
   const aspectRatio = 0.6 + Math.random() * 0.8; // 0.6 to 1.4
   
   const points = [

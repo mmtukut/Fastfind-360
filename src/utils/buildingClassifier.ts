@@ -78,7 +78,7 @@ export function classifyBuilding(
 /**
  * Calculate shape regularity (0-1, 1 being perfectly regular)
  */
-export function calculateShapeRegularity(coordinates: number[][][]): number {
+export function calculateShapeRegularity(_coordinates: number[][][]): number {
   // Simplified shape regularity calculation
   // In real implementation, would use perimeter-to-area ratio
   return 0.5 + Math.random() * 0.5;

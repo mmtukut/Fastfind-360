@@ -1,12 +1,27 @@
+import { motion } from 'framer-motion';
 import { Statistics, BUILDING_COLORS } from '../types';
 import { formatNaira, formatNumber } from '../utils/statistics';
+import { exportToCSV, exportToGeoJSON, exportToPDF } from '../utils/exportService';
+import { Building } from '../types';
 
 interface DashboardProps {
   statistics: Statistics;
   isLoading: boolean;
+  buildings?: Building[];
 }
 
-export default function Dashboard({ statistics, isLoading }: DashboardProps) {
+export default function Dashboard({ statistics, isLoading, buildings = [] }: DashboardProps) {
+  const handleExportCSV = () => {
+    exportToCSV(buildings);
+  };
+
+  const handleExportGeoJSON = () => {
+    exportToGeoJSON(buildings);
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF(buildings, statistics);
+  };
   if (isLoading) {
     return (
       <div className="p-6 bg-white rounded-lg shadow-lg">
@@ -121,6 +136,37 @@ export default function Dashboard({ statistics, isLoading }: DashboardProps) {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h4 className="text-sm font-semibold text-gray-600 mb-2">Average Building Size</h4>
           <p className="text-2xl font-bold text-blue-600">{formatNumber(averageBuildingSize)} m²</p>
+        </div>
+      </div>
+
+      {/* Export Actions */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h3 className="text-lg font-semibold mb-4 text-gray-800">Export Data</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleExportCSV}
+            className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+          >
+            📊 Export CSV
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleExportGeoJSON}
+            className="px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+          >
+            🗺️ Export GeoJSON
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleExportPDF}
+            className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+          >
+            📄 Export PDF
+          </motion.button>
         </div>
       </div>
 

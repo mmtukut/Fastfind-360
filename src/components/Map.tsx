@@ -66,6 +66,12 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
     };
 
     // Remove existing sources and layers if they exist
+    if (mapInstance.getLayer('clusters')) {
+      mapInstance.removeLayer('clusters');
+    }
+    if (mapInstance.getLayer('cluster-count')) {
+      mapInstance.removeLayer('cluster-count');
+    }
     if (mapInstance.getLayer('buildings-fill')) {
       mapInstance.removeLayer('buildings-fill');
     }
@@ -79,17 +85,66 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
       mapInstance.removeSource('buildings');
     }
 
-    // Add source
+    // Add source with clustering
     mapInstance.addSource('buildings', {
       type: 'geojson',
       data: geojson,
+      cluster: true,
+      clusterMaxZoom: 14, // Max zoom to cluster points on
+      clusterRadius: 50, // Radius of each cluster when clustering points
     });
 
-    // Add fill layer
+    // Add cluster circle layer
+    mapInstance.addLayer({
+      id: 'clusters',
+      type: 'circle',
+      source: 'buildings',
+      filter: ['has', 'point_count'],
+      paint: {
+        'circle-color': [
+          'step',
+          ['get', 'point_count'],
+          '#3B82F6',
+          100,
+          '#F59E0B',
+          500,
+          '#EF4444',
+        ],
+        'circle-radius': [
+          'step',
+          ['get', 'point_count'],
+          20,
+          100,
+          30,
+          500,
+          40,
+        ],
+        'circle-opacity': 0.8,
+      },
+    });
+
+    // Add cluster count layer
+    mapInstance.addLayer({
+      id: 'cluster-count',
+      type: 'symbol',
+      source: 'buildings',
+      filter: ['has', 'point_count'],
+      layout: {
+        'text-field': '{point_count_abbreviated}',
+        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+        'text-size': 14,
+      },
+      paint: {
+        'text-color': '#ffffff',
+      },
+    });
+
+    // Add fill layer (for unclustered points)
     mapInstance.addLayer({
       id: 'buildings-fill',
       type: 'fill',
       source: 'buildings',
+      filter: ['!', ['has', 'point_count']],
       paint: {
         'fill-color': [
           'match',
@@ -115,6 +170,7 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
       id: 'buildings-outline',
       type: 'line',
       source: 'buildings',
+      filter: ['!', ['has', 'point_count']],
       paint: {
         'line-color': '#FFFFFF',
         'line-width': 1,
@@ -126,11 +182,40 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
       id: 'buildings-selected',
       type: 'line',
       source: 'buildings',
+      filter: ['all', ['!', ['has', 'point_count']], ['==', ['id'], '']],
       paint: {
         'line-color': '#FFFF00',
         'line-width': 3,
       },
-      filter: ['==', ['id'], ''],
+    });
+
+    // Click handler for clusters
+    mapInstance.on('click', 'clusters', (e) => {
+      if (!e.features || !e.features.length) return;
+      
+      const features = e.features;
+      const clusterId = features[0].properties?.cluster_id;
+      const source = mapInstance.getSource('buildings') as mapboxgl.GeoJSONSource;
+      
+      if (source && source.getClusterExpansionZoom) {
+        source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err) return;
+          
+          mapInstance.easeTo({
+            center: (features[0].geometry as any).coordinates,
+            zoom: zoom,
+          });
+        });
+      }
+    });
+
+    // Change cursor on cluster hover
+    mapInstance.on('mouseenter', 'clusters', () => {
+      mapInstance.getCanvas().style.cursor = 'pointer';
+    });
+
+    mapInstance.on('mouseleave', 'clusters', () => {
+      mapInstance.getCanvas().style.cursor = '';
     });
 
     // Add hover effect

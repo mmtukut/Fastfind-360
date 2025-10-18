@@ -88,18 +88,41 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
-      {/* Navbar */}
-      <Navbar
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        adminMode={adminMode}
-        onAdminModeChange={setAdminMode}
-        onExport={() => setShowExportModal(true)}
-        onSearch={handleLocationSearch}
-        totalBuildings={statistics.totalBuildings}
-        potentialRevenue={statistics.potentialRevenue}
-      />
+    <div className="h-screen flex flex-col">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg z-50">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl">🛰️</div>
+              <div>
+                <h1 className="text-2xl font-bold">FastFind360</h1>
+                <p className="text-sm opacity-90">
+                  {statistics.totalBuildings.toLocaleString()} Buildings Detected | ₦{statistics.potentialRevenue.toFixed(1)}B Revenue Potential
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowDashboard(!showDashboard)}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  showDashboard
+                    ? 'bg-white text-blue-600'
+                    : 'bg-blue-700 hover:bg-blue-800 text-white'
+                }`}
+              >
+                {showDashboard ? '📊 Hide Dashboard' : '📊 Show Dashboard'}
+              </button>
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors"
+              >
+                {sidebarOpen ? '◀ Hide Filters' : '▶ Show Filters'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Main Content */}
       {adminMode ? (

@@ -74,11 +74,14 @@ const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, on
     // Create GeoJSON from buildings
     const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',
-      features: buildings.map(building => ({
+      features: buildings.map((building, index) => ({
         type: 'Feature',
-        id: building.id,
+        id: index, // Use numeric ID for Mapbox feature state
         geometry: building.geometry,
-        properties: building.properties,
+        properties: {
+          ...building.properties,
+          buildingId: building.id, // Keep string ID as property
+        },
       })),
     };
 
@@ -151,17 +154,17 @@ const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, on
     });
 
     // Add hover effect
-    let hoveredBuildingId: string | null = null;
+    let hoveredBuildingId: number | null = null;
 
     mapInstance.on('mousemove', 'buildings-fill', (e) => {
       if (e.features && e.features.length > 0) {
-        if (hoveredBuildingId) {
+        if (hoveredBuildingId !== null) {
           mapInstance.setFeatureState(
             { source: 'buildings', id: hoveredBuildingId },
             { hover: false }
           );
         }
-        hoveredBuildingId = e.features[0].id as string;
+        hoveredBuildingId = e.features[0].id as number;
         mapInstance.setFeatureState(
           { source: 'buildings', id: hoveredBuildingId },
           { hover: true }
@@ -171,7 +174,7 @@ const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, on
     });
 
     mapInstance.on('mouseleave', 'buildings-fill', () => {
-      if (hoveredBuildingId) {
+      if (hoveredBuildingId !== null) {
         mapInstance.setFeatureState(
           { source: 'buildings', id: hoveredBuildingId },
           { hover: false }
@@ -185,7 +188,7 @@ const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, on
     mapInstance.on('click', 'buildings-fill', (e) => {
       if (e.features && e.features.length > 0) {
         const feature = e.features[0];
-        const buildingId = feature.id as string;
+        const buildingId = feature.properties?.buildingId as string;
         onBuildingClick(buildingId);
 
         // Show popup
@@ -196,7 +199,7 @@ const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, on
             `
             <div style="padding: 12px; min-width: 200px;">
               <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #1e3a8a;">
-                ${buildingId}
+                ${buildingId || 'Building ' + feature.id}
               </h3>
               <div style="margin-bottom: 6px; font-size: 12px;">
                 <strong>Type:</strong> ${props?.classification || 'Unknown'}
@@ -205,7 +208,7 @@ const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, on
                 <strong>Area:</strong> ${formatNumber(props?.area_in_meters || 0)} m²
               </div>
               <div style="margin-bottom: 6px; font-size: 12px;">
-                <strong>Confidence:</strong> ${props?.confidence || 0}%
+                <strong>Confidence:</strong> ${((props?.confidence || 0) * 100).toFixed(1)}%
               </div>
               <div style="margin-bottom: 6px; font-size: 12px;">
                 <strong>Estimated Value:</strong> ${formatNaira(props?.estimatedValue || 0)}

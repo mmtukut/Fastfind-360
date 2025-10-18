@@ -1,0 +1,16 @@
+FastFind360 Logo Instructions
+==============================
+
+To add the FastFind360 logo:
+
+1. Save the logo image as: /workspace/public/logo-white.png
+2. The logo should be a white/light colored version for the blue header
+3. Recommended size: 200-300px wide, transparent background
+4. Format: PNG with transparency
+
+The application is already configured to display the logo at:
+- Header height: 48px (h-12)
+- Auto width to maintain aspect ratio
+- Located in the top-left corner of the header
+
+The logo will replace the satellite emoji (🛰️) currently shown.

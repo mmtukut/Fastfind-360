@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Building, BUILDING_COLORS } from '../types';
@@ -10,10 +10,27 @@ interface MapProps {
   onBuildingClick: (buildingId: string) => void;
 }
 
-export default function Map({ buildings, selectedBuildingId, onBuildingClick }: MapProps) {
+export interface MapHandle {
+  flyTo: (coords: [number, number], zoom?: number) => void;
+}
+
+const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, onBuildingClick }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Expose flyTo method to parent components
+  useImperativeHandle(ref, () => ({
+    flyTo: (coords: [number, number], zoom = 15) => {
+      if (map.current) {
+        map.current.flyTo({
+          center: coords,
+          zoom: zoom,
+          duration: 2000,
+        });
+      }
+    },
+  }));
 
   // Initialize map
   useEffect(() => {
@@ -57,11 +74,14 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
     // Create GeoJSON from buildings
     const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',
-      features: buildings.map(building => ({
+      features: buildings.map((building, index) => ({
         type: 'Feature',
-        id: building.id,
+        id: index, // Use numeric ID for Mapbox feature state
         geometry: building.geometry,
-        properties: building.properties,
+        properties: {
+          ...building.properties,
+          buildingId: building.id, // Keep string ID as property
+        },
       })),
     };
 
@@ -134,17 +154,17 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
     });
 
     // Add hover effect
-    let hoveredBuildingId: string | null = null;
+    let hoveredBuildingId: number | null = null;
 
     mapInstance.on('mousemove', 'buildings-fill', (e) => {
       if (e.features && e.features.length > 0) {
-        if (hoveredBuildingId) {
+        if (hoveredBuildingId !== null) {
           mapInstance.setFeatureState(
             { source: 'buildings', id: hoveredBuildingId },
             { hover: false }
           );
         }
-        hoveredBuildingId = e.features[0].id as string;
+        hoveredBuildingId = e.features[0].id as number;
         mapInstance.setFeatureState(
           { source: 'buildings', id: hoveredBuildingId },
           { hover: true }
@@ -154,7 +174,7 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
     });
 
     mapInstance.on('mouseleave', 'buildings-fill', () => {
-      if (hoveredBuildingId) {
+      if (hoveredBuildingId !== null) {
         mapInstance.setFeatureState(
           { source: 'buildings', id: hoveredBuildingId },
           { hover: false }
@@ -168,7 +188,7 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
     mapInstance.on('click', 'buildings-fill', (e) => {
       if (e.features && e.features.length > 0) {
         const feature = e.features[0];
-        const buildingId = feature.id as string;
+        const buildingId = feature.properties?.buildingId as string;
         onBuildingClick(buildingId);
 
         // Show popup
@@ -179,7 +199,7 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
             `
             <div style="padding: 12px; min-width: 200px;">
               <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #1e3a8a;">
-                ${buildingId}
+                ${buildingId || 'Building ' + feature.id}
               </h3>
               <div style="margin-bottom: 6px; font-size: 12px;">
                 <strong>Type:</strong> ${props?.classification || 'Unknown'}
@@ -188,7 +208,7 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
                 <strong>Area:</strong> ${formatNumber(props?.area_in_meters || 0)} m²
               </div>
               <div style="margin-bottom: 6px; font-size: 12px;">
-                <strong>Confidence:</strong> ${props?.confidence || 0}%
+                <strong>Confidence:</strong> ${((props?.confidence || 0) * 100).toFixed(1)}%
               </div>
               <div style="margin-bottom: 6px; font-size: 12px;">
                 <strong>Estimated Value:</strong> ${formatNaira(props?.estimatedValue || 0)}
@@ -251,4 +271,8 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
       )}
     </div>
   );
-}
+});
+
+Map.displayName = 'Map';
+
+export default Map;

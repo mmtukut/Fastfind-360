@@ -13,6 +13,7 @@ export interface Building {
     estimatedValue: number;
     address?: string;
     detectedAt: string;
+    numericId?: number;
   };
 }
 

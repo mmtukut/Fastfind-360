@@ -13,13 +13,13 @@ export function useBuildingData() {
         setIsLoading(true);
         
         // Try to load from local file first
-        // In production, this would fetch from Microsoft Building Footprints or API
+        // Using Google Open Buildings data for Gombe State
         try {
-          const response = await fetch('/data/gombe_buildings.geojson');
+          const response = await fetch('/data/buildings/gombe_buildings.geojson');
           if (response.ok) {
             const data: BuildingCollection = await response.json();
             setBuildings(data.features);
-            console.log(`Loaded ${data.features.length} buildings from file`);
+            console.log(`✅ Loaded ${data.features.length} buildings from Google Open Buildings + FastFind360`);
             return;
           }
         } catch (err) {

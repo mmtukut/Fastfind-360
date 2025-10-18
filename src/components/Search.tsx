@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { getAllLocationNames } from '../utils/locations';
 
 interface SearchProps {
   onSearch: (query: string) => void;
@@ -77,9 +78,11 @@ export default function Search({ onSearch, placeholder = 'Search buildings, loca
       {query && (
         <div className="absolute z-10 w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
           <div className="p-2">
-            <div className="text-xs text-gray-500 px-2 py-1">Quick suggestions:</div>
-            {['Gombe Central', 'Nasarawo', 'Tudun Wada', 'Commercial', 'Residential'].map(
-              (suggestion) => (
+            <div className="text-xs text-gray-500 px-2 py-1 mb-1">📍 Locations:</div>
+            {getAllLocationNames()
+              .filter(name => name.toLowerCase().includes(query.toLowerCase()))
+              .slice(0, 5)
+              .map((suggestion) => (
                 <button
                   key={suggestion}
                   type="button"
@@ -87,12 +90,12 @@ export default function Search({ onSearch, placeholder = 'Search buildings, loca
                     setQuery(suggestion);
                     onSearch(suggestion);
                   }}
-                  className="w-full text-left px-3 py-2 hover:bg-gray-100 rounded text-sm transition-colors"
+                  className="w-full text-left px-3 py-2 hover:bg-blue-50 rounded text-sm transition-colors flex items-center gap-2"
                 >
-                  {suggestion}
+                  <span>📍</span>
+                  <span>{suggestion}</span>
                 </button>
-              )
-            )}
+              ))}
           </div>
         </div>
       )}

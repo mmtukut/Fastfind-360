@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Building, BUILDING_COLORS } from '../types';
@@ -10,10 +10,27 @@ interface MapProps {
   onBuildingClick: (buildingId: string) => void;
 }
 
-export default function Map({ buildings, selectedBuildingId, onBuildingClick }: MapProps) {
+export interface MapHandle {
+  flyTo: (coords: [number, number], zoom?: number) => void;
+}
+
+const Map = forwardRef<MapHandle, MapProps>(({ buildings, selectedBuildingId, onBuildingClick }, ref) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Expose flyTo method to parent components
+  useImperativeHandle(ref, () => ({
+    flyTo: (coords: [number, number], zoom = 15) => {
+      if (map.current) {
+        map.current.flyTo({
+          center: coords,
+          zoom: zoom,
+          duration: 2000,
+        });
+      }
+    },
+  }));
 
   // Initialize map
   useEffect(() => {
@@ -251,4 +268,8 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
       )}
     </div>
   );
-}
+});
+
+Map.displayName = 'Map';
+
+export default Map;

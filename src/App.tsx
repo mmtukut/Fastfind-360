@@ -1,20 +1,23 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import Map from './components/Map';
 import Dashboard from './components/Dashboard';
 import Search from './components/Search';
 import Filters from './components/Filters';
 import Sidebar from './components/Sidebar';
 import PropertyCard from './components/PropertyCard';
+import ExportButton from './components/ExportButton';
 import { useBuildingData } from './hooks/useBuildingData';
 import { useMapState } from './hooks/useMapState';
 import { useFilters } from './hooks/useFilters';
 import { calculateStatistics } from './utils/statistics';
+import { findLocation } from './utils/locations';
 
 export default function App() {
   const { buildings, isLoading, error } = useBuildingData();
   const { selectedBuildingId, selectBuilding } = useMapState();
   const [showDashboard, setShowDashboard] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const mapRef = useRef<{ flyTo: (coords: [number, number], zoom?: number) => void }>(null);
 
   const {
     filters,
@@ -53,6 +56,17 @@ export default function App() {
     return buildings.find((b) => b.id === selectedBuildingId) || null;
   }, [buildings, selectedBuildingId]);
 
+  // Handle location search
+  const handleLocationSearch = (query: string) => {
+    updateSearchQuery(query);
+    
+    // Check if it's a location name
+    const location = findLocation(query);
+    if (location && mapRef.current) {
+      mapRef.current.flyTo(location.coordinates, location.zoom);
+    }
+  };
+
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -76,7 +90,7 @@ export default function App() {
               <div>
                 <h1 className="text-2xl font-bold">FastFind360</h1>
                 <p className="text-sm opacity-90">
-                  Satellite-Powered Property Intelligence
+                  {statistics.totalBuildings.toLocaleString()} Buildings Detected | ₦{statistics.potentialRevenue.toFixed(1)}B Revenue Potential
                 </p>
               </div>
             </div>
@@ -107,6 +121,7 @@ export default function App() {
         {/* Map */}
         <div className={`absolute inset-0 ${sidebarOpen ? 'md:left-80' : 'left-0'} transition-all duration-300`}>
           <Map
+            ref={mapRef}
             buildings={filteredBuildings}
             selectedBuildingId={selectedBuildingId}
             onBuildingClick={selectBuilding}
@@ -118,8 +133,8 @@ export default function App() {
           <div className="space-y-6">
             {/* Search */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Search</h2>
-              <Search onSearch={updateSearchQuery} />
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Search Locations</h2>
+              <Search onSearch={handleLocationSearch} />
             </div>
 
             {/* Filters */}
@@ -144,6 +159,11 @@ export default function App() {
               <p className="text-xs text-blue-700">
                 of {buildings.length.toLocaleString()} total buildings
               </p>
+            </div>
+
+            {/* Export Button */}
+            <div>
+              <ExportButton buildings={filteredBuildings} disabled={isLoading} />
             </div>
           </div>
         </Sidebar>
@@ -196,12 +216,12 @@ export default function App() {
       <div className="bg-gray-800 text-white px-6 py-3 text-sm flex items-center justify-between z-40">
         <div className="flex items-center gap-6">
           <span>📍 Gombe State, Nigeria</span>
-          <span>🛰️ NIGCOMSAT-1R Live Feed</span>
-          <span className="text-green-400">● Active</span>
+          <span>🛰️ Satellite-Powered Detection</span>
+          <span className="text-green-400">● {statistics.totalBuildings.toLocaleString()} Buildings Detected</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-gray-400">Powered by</span>
-          <span className="font-semibold">FastFind360</span>
+          <span className="font-semibold">Google Open Buildings + FastFind360 AI</span>
         </div>
       </div>
     </div>

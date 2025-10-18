@@ -85,11 +85,20 @@ export default function App() {
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg z-50">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="text-3xl">🛰️</div>
-              <div>
-                <h1 className="text-2xl font-bold">FastFind360</h1>
-                <p className="text-sm opacity-90">
+            <div className="flex items-center gap-4">
+              <img 
+                src="/logo-white.svg" 
+                alt="FastFind360 Logo" 
+                className="h-14 w-auto object-contain"
+                onError={(e) => {
+                  // Fallback to PNG if SVG fails, or use emoji
+                  const img = e.target as HTMLImageElement;
+                  img.onerror = null;
+                  img.src = '/logo-white.png';
+                }}
+              />
+              <div className="border-l-2 border-white/30 pl-4">
+                <p className="text-sm opacity-90 font-medium">
                   {statistics.totalBuildings.toLocaleString()} Buildings Detected | ₦{statistics.potentialRevenue.toFixed(1)}B Revenue Potential
                 </p>
               </div>

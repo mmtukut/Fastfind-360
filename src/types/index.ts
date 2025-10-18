@@ -13,6 +13,9 @@ export interface Building {
     estimatedValue: number;
     address?: string;
     detectedAt: string;
+    latitude?: number;
+    longitude?: number;
+    full_plus_code?: string;
   };
 }
 

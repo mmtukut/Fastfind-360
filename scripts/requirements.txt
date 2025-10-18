@@ -1,0 +1,4 @@
+# Python dependencies for Open Buildings data processing
+kagglehub>=0.3.0
+pandas>=2.0.0
+shapely>=2.0.0

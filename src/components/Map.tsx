@@ -120,6 +120,12 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
     };
 
     // Remove existing sources and layers if they exist
+    if (mapInstance.getLayer('clusters')) {
+      mapInstance.removeLayer('clusters');
+    }
+    if (mapInstance.getLayer('cluster-count')) {
+      mapInstance.removeLayer('cluster-count');
+    }
     if (mapInstance.getLayer('buildings-fill')) {
       mapInstance.removeLayer('buildings-fill');
     }
@@ -133,17 +139,66 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
       mapInstance.removeSource('buildings');
     }
 
-    // Add source
+    // Add source with clustering
     mapInstance.addSource('buildings', {
       type: 'geojson',
       data: geojson,
+      cluster: true,
+      clusterMaxZoom: 14, // Max zoom to cluster points on
+      clusterRadius: 50, // Radius of each cluster when clustering points
     });
 
-    // Add fill layer
+    // Add cluster circle layer
+    mapInstance.addLayer({
+      id: 'clusters',
+      type: 'circle',
+      source: 'buildings',
+      filter: ['has', 'point_count'],
+      paint: {
+        'circle-color': [
+          'step',
+          ['get', 'point_count'],
+          '#3B82F6',
+          100,
+          '#F59E0B',
+          500,
+          '#EF4444',
+        ],
+        'circle-radius': [
+          'step',
+          ['get', 'point_count'],
+          20,
+          100,
+          30,
+          500,
+          40,
+        ],
+        'circle-opacity': 0.8,
+      },
+    });
+
+    // Add cluster count layer
+    mapInstance.addLayer({
+      id: 'cluster-count',
+      type: 'symbol',
+      source: 'buildings',
+      filter: ['has', 'point_count'],
+      layout: {
+        'text-field': '{point_count_abbreviated}',
+        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+        'text-size': 14,
+      },
+      paint: {
+        'text-color': '#ffffff',
+      },
+    });
+
+    // Add fill layer (for unclustered points)
     mapInstance.addLayer({
       id: 'buildings-fill',
       type: 'fill',
       source: 'buildings',
+      filter: ['!', ['has', 'point_count']],
       paint: {
         'fill-color': [
           'match',
@@ -164,61 +219,59 @@ export default function Map({ buildings, selectedBuildingId, onBuildingClick }: 
       },
     });
 
-  const handlePolygonClick = useCallback((building: Building) => {
-    onBuildingClick(building.id);
-    const center = building.properties.latitude && building.properties.longitude
-      ? { lat: building.properties.latitude, lng: building.properties.longitude }
-      : getPolygonCenter(building.geometry.coordinates);
-    
-    setInfoWindowData({
-      position: center,
-      building,
+    // Add outline layer
+    mapInstance.addLayer({
+      id: 'buildings-outline',
+      type: 'line',
+      source: 'buildings',
+      filter: ['!', ['has', 'point_count']],
+      paint: {
+        'line-color': '#FFFFFF',
+        'line-width': 1,
+      },
     });
   }, [onBuildingClick]);
 
-  const getPolygonCenter = (coordinates: number[][][]): google.maps.LatLngLiteral => {
-    const coords = coordinates[0];
-    const avgLat = coords.reduce((sum, coord) => sum + coord[1], 0) / coords.length;
-    const avgLng = coords.reduce((sum, coord) => sum + coord[0], 0) / coords.length;
-    return { lat: avgLat, lng: avgLng };
-  };
+    // Add selected building layer
+    mapInstance.addLayer({
+      id: 'buildings-selected',
+      type: 'line',
+      source: 'buildings',
+      filter: ['all', ['!', ['has', 'point_count']], ['==', ['id'], '']],
+      paint: {
+        'line-color': '#FFFF00',
+        'line-width': 3,
+      },
+    });
 
-  const convertToGoogleMapsPath = (coordinates: number[][][]): google.maps.LatLngLiteral[] => {
-    return coordinates[0].map(coord => ({
-      lat: coord[1],
-      lng: coord[0],
-    }));
-  };
+    // Click handler for clusters
+    mapInstance.on('click', 'clusters', (e) => {
+      if (!e.features || !e.features.length) return;
+      
+      const features = e.features;
+      const clusterId = features[0].properties?.cluster_id;
+      const source = mapInstance.getSource('buildings') as mapboxgl.GeoJSONSource;
+      
+      if (source && source.getClusterExpansionZoom) {
+        source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err) return;
+          
+          mapInstance.easeTo({
+            center: (features[0].geometry as any).coordinates,
+            zoom: zoom,
+          });
+        });
+      }
+    });
 
-  if (loadError) {
-    return (
-      <div className="flex items-center justify-center h-full bg-gray-100">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
-          <h3 className="text-red-800 font-semibold mb-2">Error loading map</h3>
-          <p className="text-red-600 text-sm">{loadError.message}</p>
-          <p className="text-red-600 text-sm mt-2">
-            Please ensure VITE_GOOGLE_MAPS_API_KEY is set in your .env.local file
-          </p>
-        </div>
-      </div>
-    );
-  }
+    // Change cursor on cluster hover
+    mapInstance.on('mouseenter', 'clusters', () => {
+      mapInstance.getCanvas().style.cursor = 'pointer';
+    });
 
-
-  if (!isLoaded) {
-    return (
-      <div className="relative w-full h-full">
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 shadow-xl">
-            <div className="flex items-center gap-3">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-              <span className="text-gray-700">Loading high-resolution satellite map...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    mapInstance.on('mouseleave', 'clusters', () => {
+      mapInstance.getCanvas().style.cursor = '';
+    });
 
   return (
     <div className="relative w-full h-full">

@@ -1,0 +1,32 @@
+<svg width="250" height="60" viewBox="0 0 250 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Magnifying glass with globe -->
+  <g transform="translate(10, 10)">
+    <!-- Globe -->
+    <circle cx="15" cy="15" r="12" fill="none" stroke="white" stroke-width="2"/>
+    <ellipse cx="15" cy="15" rx="5" ry="12" fill="none" stroke="white" stroke-width="1.5"/>
+    <line x1="3" y1="15" x2="27" y2="15" stroke="white" stroke-width="1.5"/>
+    <line x1="15" y1="3" x2="15" y2="27" stroke="white" stroke-width="1.5"/>
+    
+    <!-- Magnifying glass handle -->
+    <circle cx="15" cy="15" r="15" fill="none" stroke="#FF8C42" stroke-width="3"/>
+    <line x1="26" y1="26" x2="35" y2="35" stroke="#FF8C42" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Speed lines -->
+    <line x1="-5" y1="5" x2="0" y2="5" stroke="#FF8C42" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-8" y1="12" x2="0" y2="12" stroke="#FF8C42" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-5" y1="19" x2="0" y2="19" stroke="#FF8C42" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  
+  <!-- FASTFIND360 Text -->
+  <text x="60" y="35" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="white">
+    FAST<tspan fill="#FF8C42">FIND</tspan>
+  </text>
+  <text x="180" y="35" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="#4A5FDB">
+    360
+  </text>
+  
+  <!-- Tagline -->
+  <text x="60" y="50" font-family="Arial, sans-serif" font-size="9" fill="white" opacity="0.9">
+    Property Intelligence from Space
+  </text>
+</svg>

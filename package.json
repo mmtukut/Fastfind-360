@@ -13,6 +13,14 @@
     "vercel:preview": "vercel"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.7",
+    "@turf/turf": "^6.5.0",
+    "mapbox-gl": "^2.15.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/mapbox-gl": "^2.7.19",
     "@turf/turf": "^6.5.0",
     "framer-motion": "^10.16.16",
     "lucide-react": "^0.546.0",

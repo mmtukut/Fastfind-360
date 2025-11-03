@@ -12,6 +12,39 @@ export function useBuildingData() {
       try {
         setIsLoading(true);
         
+        // Try to load Open Buildings dataset first (priority)
+        try {
+          console.log('Loading Open Buildings dataset for Gombe...');
+          const response = await fetch('/data/gombe_open_buildings.geojson');
+          if (response.ok) {
+            const data: BuildingCollection = await response.json();
+            setBuildings(data.features);
+            console.log(`✓ Loaded ${data.features.length} buildings from Open Buildings dataset`);
+            console.log('Data source: Google Open Buildings');
+            return;
+          }
+        } catch (err) {
+          console.log('Open Buildings data not found, trying alternative sources...');
+        }
+        
+        // Fallback: Try to load from legacy file
+        try {
+          const response = await fetch('/data/gombe_buildings.geojson');
+          if (response.ok) {
+            const data: BuildingCollection = await response.json();
+            setBuildings(data.features);
+            console.log(`Loaded ${data.features.length} buildings from legacy file`);
+            return;
+          }
+        } catch (err) {
+          console.log('No building data file found, generating sample data...');
+        }
+        
+        // Last resort: Generate sample data
+        console.warn('Using generated sample data. For production, run: python scripts/fetch_open_buildings.py');
+        const buildingData = generateGombeBuildings(12847);
+        setBuildings(buildingData.features);
+        console.log(`Generated ${buildingData.features.length} sample buildings`);
         // Load real building data from Open Buildings CSV
         console.log('🌍 Loading Gombe building data from Open Buildings dataset...');
         const response = await fetch('/data/buildings/gombe_buildings.csv');

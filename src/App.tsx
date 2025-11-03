@@ -11,10 +11,16 @@ import { useBuildingData } from './hooks/useBuildingData';
 import { useMapState } from './hooks/useMapState';
 import { useFilters } from './hooks/useFilters';
 import { calculateStatistics } from './utils/statistics';
+import { findLocation } from './utils/locations';
+import { MapPin, Layers, Building2, Loader2, AlertTriangle } from 'lucide-react';
 
 export default function App() {
   const { buildings, isLoading, error } = useBuildingData();
   const { selectedBuildingId, selectBuilding } = useMapState();
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+  const [adminMode, setAdminMode] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [showDashboard, setShowDashboard] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showHero, setShowHero] = useState(true);
@@ -68,10 +74,14 @@ export default function App() {
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
-          <div className="text-red-600 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Data</h2>
-          <p className="text-gray-600">{error}</p>
+        <div className="bg-white rounded-xl shadow-xl p-8 max-w-md">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-red-600" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Error Loading Data</h2>
+          <p className="text-gray-600 text-center">{error}</p>
         </div>
       </div>
     );

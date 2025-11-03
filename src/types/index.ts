@@ -16,6 +16,7 @@ export interface Building {
     latitude?: number;
     longitude?: number;
     full_plus_code?: string;
+    numericId?: number;
   };
 }
 
